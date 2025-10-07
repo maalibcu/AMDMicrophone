@@ -10,8 +10,8 @@
 
 #include <IOKit/audio/IOAudioEngine.h>
 
-#define NUM_PERIODS 4
-#define PERIOD_SIZE 768
+#define NUM_PERIODS 8
+#define PERIOD_SIZE 1024
 #define BUFFER_SIZE (PERIOD_SIZE * NUM_PERIODS)
 
 #define SAMPLE_RATE  48000
