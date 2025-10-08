@@ -37,6 +37,7 @@ void AMDMicrophoneDevice::configDMA()
     writel(ACP_PAGE_SIZE_4K_ENABLE, ACP_AXI2AXI_ATU_PAGE_SIZE_GRP_1);
 
     IOByteCount offset = 0;
+    dmaDescriptor->prepare(kIODirectionIn);
     while (offset < dmaDescriptor->getLength()) {
         IOByteCount segmentLength = 0;
         addr64_t address = dmaDescriptor->getPhysicalSegment(offset, &segmentLength);
@@ -255,7 +256,7 @@ void AMDMicrophoneDevice::interruptHandler()
     if (val & BIT(ACP_PDM_DMA_STAT)) {
         writel(BIT(ACP_PDM_DMA_STAT), ACP_EXTERNAL_INTR_STAT);
         byteCount = getByteCount();
-        if (byteCount % BUFFER_SIZE == 0)
+        if (byteCount > 0)
             audioEngine->takeTimeStamp();
     }
 }
@@ -370,6 +371,7 @@ void AMDMicrophoneDevice::free()
     }
 
     if (dmaDescriptor) {
+        dmaDescriptor->complete();
         dmaDescriptor->release();
         dmaDescriptor = NULL;
     }
